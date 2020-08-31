@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -14,16 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class TimeUnit {
-
+class Slot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column
-    LocalDateTime dateTime;
+    String name;
 
-    @OneToMany(mappedBy = "timeUnit")
+    int floorNumber;
+
+    @OneToMany(mappedBy = "slot")
     List<OccupationValue> occupationValues;
-
 }
