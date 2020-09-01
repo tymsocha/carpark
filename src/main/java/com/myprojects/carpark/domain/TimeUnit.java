@@ -24,6 +24,6 @@ class TimeUnit {
     LocalDateTime dateTime;
 
     @OneToMany(mappedBy = "timeUnit")
-    List<OccupationValue> occupationValues;
+    List<Occupation> occupations;
 
 }

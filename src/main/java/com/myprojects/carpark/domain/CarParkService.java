@@ -17,7 +17,12 @@ public class CarParkService {
     Mapper mapper;
 
     List<SlotDto> generateSlots(Integer floorsNumber, Integer spotsNumber) {
+        Long start = System.currentTimeMillis();
         List<Slot> generatedSlots = carSpotsGenerator.generateCarParkMap(floorsNumber, spotsNumber);
+        carSpotsGenerator.generateTimeUnitsThrough30Days();
+        carSpotsGenerator.randomlySetOccupiedSlotsThrough30Days();
+        Long end = System.currentTimeMillis();
+        System.out.println("*******************************" + (end - start));
         return mapper.mapToSlotDtoList(generatedSlots);
     }
 }

@@ -23,5 +23,5 @@ class Slot {
     int floorNumber;
 
     @OneToMany(mappedBy = "slot")
-    List<OccupationValue> occupationValues;
+    List<Occupation> occupations;
 }

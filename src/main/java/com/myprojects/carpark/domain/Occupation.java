@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class OccupationValue {
+class Occupation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
