@@ -32,16 +32,16 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
     List<String> getOccupiedSlots(@Param("dateTime") LocalDateTime dateTime, @Param("floor") Integer floor);
 
     @Query(
-            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s)) FROM Occupation o " +
+            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
             "LEFT JOIN Slot s ON s.id = o.slot.id " +
             "WHERE s.floorNumber = :floor " +
             "AND o.occupied = true " +
             "GROUP BY s.name"
     )
-    List<OccupationTimeDTO> selectSpotAndCountOccupiedCount(@Param("floor") Integer floor);
+    List<OccupationTimeDTO> selectSpotsAndCountOccupiedTime(@Param("floor") Integer floor);
 
     @Query(
-            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s)) FROM Occupation o " +
+            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
             "LEFT JOIN Slot s ON s.id = o.slot.id " +
             "LEFT JOIN TimeUnit t ON t.id = o.timeUnit.id " +
             "WHERE s.floorNumber = :floor " +
@@ -50,7 +50,56 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "AND t.dateTime <= :end " +
             "GROUP BY s.name"
     )
-    List<OccupationTimeDTO> selectSpotAndCountOccupiedCount(
+    List<OccupationTimeDTO> selectSpotsAndCountOccupiedTime(
             @Param("floor") Integer floor, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end
+    );
+
+    @Query(
+            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
+            "LEFT JOIN Slot s ON s.id = o.slot.id " +
+            "LEFT JOIN TimeUnit t ON t.id = o.timeUnit.id " +
+            "WHERE s.name = :spot " +
+            "AND o.occupied = true " +
+            "AND t.dateTime > :start " +
+            "AND t.dateTime <= :end " +
+            "GROUP BY s.name"
+    )
+    List<OccupationTimeDTO> selectSpotAndCountOccupiedTime(
+            @Param("spot") String spot,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @Query(
+            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
+            "LEFT JOIN Slot s ON s.id = o.slot.id " +
+            "WHERE s.name = :spot " +
+            "AND o.occupied = true " +
+            "GROUP BY s.name"
+    )
+    List<OccupationTimeDTO> selectSpotAndCountOccupiedTime(
+            @Param("spot") String spot
+    );
+
+    @Query(
+            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
+            "LEFT JOIN Slot s ON s.id = o.slot.id " +
+            "WHERE o.occupied = true " +
+            "GROUP BY s.name"
+    )
+    List<OccupationTimeDTO> selectAllParkingSpotsAndCountOccupiedTime();
+
+    @Query(
+            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
+            "LEFT JOIN Slot s ON s.id = o.slot.id " +
+            "LEFT JOIN TimeUnit t ON t.id = o.timeUnit.id " +
+            "WHERE o.occupied = true " +
+            "AND t.dateTime > :start " +
+            "AND t.dateTime <= :end " +
+            "GROUP BY s.name"
+    )
+    List<OccupationTimeDTO> selectAllParkingSpotsAndCountOccupiedTime(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
     );
 }

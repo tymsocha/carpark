@@ -35,4 +35,36 @@ public class CarParkController {
     ) {
         return ResponseEntity.ok(carParkApi.getAmountOfOccupationTimeForSlot(floor, startDate, endDate));
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "energyConsumption/spot/{spot}")
+    public ResponseEntity<?> getElectricityConsumptionPerSpotAndCost(
+            @PathVariable("spot") String spot,
+            @RequestParam Long energyConsumption,
+            @RequestParam Long cost,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate
+    ) {
+        return ResponseEntity.ok(carParkApi.getElectricityConsumptionAndCost(spot, energyConsumption, cost, startDate, endDate));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "energyConsumption/floor/{floor}")
+    public ResponseEntity<?> getElectricityConsumptionPerFloorAndCost(
+            @PathVariable("floor") Integer floor,
+            @RequestParam Long energyConsumption,
+            @RequestParam Long cost,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate
+    ) {
+        return ResponseEntity.ok(carParkApi.getElectricityConsumptionAndCostPerFloor(floor, energyConsumption, cost, startDate, endDate));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "energyConsumption")
+    public ResponseEntity<?> getElectricityConsumptionForCarPark(
+            @RequestParam Long energyConsumption,
+            @RequestParam Long cost,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate
+    ) {
+        return ResponseEntity.ok(carParkApi.getElectricityConsumptionAndCostForCarPark(energyConsumption, cost, startDate, endDate));
+    }
 }

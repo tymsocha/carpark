@@ -100,7 +100,7 @@ class CarSpotsGenerator {
     }
 
 
-    LocalDateTime checkMonthAndSetNewDay(LocalDateTime date) {
+    private LocalDateTime checkMonthAndSetNewDay(LocalDateTime date) {
         Integer day = date.getDayOfMonth();
         Integer month = date.getMonthValue();
         if (GeneralConstants.monthsWith31Days.contains(month) && day.equals(31)) {
@@ -129,7 +129,7 @@ class CarSpotsGenerator {
     }
 
     void randomlySetOccupiedSlotsThrough30Days() {
-        List<Occupation> valuesOfOcuppiedSeats = new ArrayList<>();
+        List<Occupation> valuesOfOccupiedSeats = new ArrayList<>();
         List<Slot> allSlots = slotRepository.findAll();
         List<TimeUnit> allTimeUnits = timeUnitRepository.findAll();
         Random random = new Random();
@@ -141,9 +141,9 @@ class CarSpotsGenerator {
                                 .timeUnit(timeUnit)
                                 .occupied(random.nextBoolean())
                                 .build();
-                valuesOfOcuppiedSeats.add(occupation);
+                valuesOfOccupiedSeats.add(occupation);
             }
         }
-        occupationRepository.saveAll(valuesOfOcuppiedSeats);
+        occupationRepository.saveAll(valuesOfOccupiedSeats);
     }
 }

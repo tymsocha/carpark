@@ -1,7 +1,6 @@
 package com.myprojects.carpark.domain;
 
-import com.myprojects.carpark.domain.dto.OccupationTimeDTO;
-import com.myprojects.carpark.domain.dto.SlotDto;
+import com.myprojects.carpark.domain.dto.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +17,7 @@ public class CarParkApi {
     CarParkService carParkService;
 
     @Transactional
-    public List<SlotDto> generateSlots(Integer numberOfFloors, Integer numberOfSlots) {
+    public GenerationTimeDto generateSlots(Integer numberOfFloors, Integer numberOfSlots) {
         return carParkService.generateSlots(numberOfFloors, numberOfSlots);
     }
 
@@ -28,7 +26,23 @@ public class CarParkApi {
         return carParkService.getOccupiedSlots(timeString, floor);
     }
 
+    @Transactional(readOnly = true)
     public List<OccupationTimeDTO> getAmountOfOccupationTimeForSlot(Integer floor, String startDate, String endDate) {
         return carParkService.getAmountOfOccupationTimePerSlot(floor, startDate, endDate);
+    }
+
+    @Transactional(readOnly = true)
+    public EnergyConsumptionDto getElectricityConsumptionAndCost(String spot, Long energyConsumption, Long cost, String startDate, String endDate) {
+        return carParkService.getElectricityConsumptionAndCost(spot, energyConsumption, cost, startDate, endDate);
+    }
+
+    @Transactional(readOnly = true)
+    public FloorEnergyDto getElectricityConsumptionAndCostPerFloor(Integer floor, Long energyConsumption, Long cost, String startDate, String endDate) {
+        return carParkService.getElectricityConsumptionAndCostPerFloor(floor, energyConsumption, cost, startDate, endDate);
+    }
+
+    @Transactional(readOnly = true)
+    public CarParkEnergyDto getElectricityConsumptionAndCostForCarPark(Long energyConsumption, Long cost, String startDate, String endDate) {
+        return carParkService.getEletricConsumptionAndCostForCarPark(energyConsumption, cost, startDate, endDate);
     }
 }

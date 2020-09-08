@@ -10,9 +10,11 @@ import lombok.experimental.FieldDefaults;
 public class OccupationTimeDTO {
     String slotName;
     Long occupiedTime;
+    int floor;
 
-    public OccupationTimeDTO(String slotName, Long occupiedTime) {
+    public OccupationTimeDTO(String slotName, Long occupiedTime, int floor) {
         this.slotName = slotName;
         this.occupiedTime = occupiedTime;
+        this.floor = floor;
     }
 }
