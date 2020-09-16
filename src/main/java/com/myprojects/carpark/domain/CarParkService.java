@@ -19,6 +19,7 @@ public class CarParkService {
 
     CarSpotsGenerator carSpotsGenerator;
     OccupationRepository occupationRepository;
+    SlotRepository slotRepository;
     Mapper mapper;
 
     GenerationTimeDto generateSlots(Integer floorsNumber, Integer spotsNumber) {
@@ -145,4 +146,14 @@ public class CarParkService {
                 .map(OccupationTimeDTO::getFloor)
                 .collect(Collectors.toList());
     }
+
+    EmployeesNumberDto getAllEmployeesAndPriceOfSalaries(Integer spotsOccupied, Long hourlySalary) {
+        return null;
+    }
+
+    Boolean checkIfSpotsGenerated() {
+        List<Slot> slotList = slotRepository.findAll();
+        return !slotList.isEmpty();
+    }
 }
+

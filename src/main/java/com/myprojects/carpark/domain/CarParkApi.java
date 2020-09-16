@@ -45,4 +45,14 @@ public class CarParkApi {
     public CarParkEnergyDto getElectricityConsumptionAndCostForCarPark(Long energyConsumption, Long cost, String startDate, String endDate) {
         return carParkService.getEletricConsumptionAndCostForCarPark(energyConsumption, cost, startDate, endDate);
     }
+
+    @Transactional(readOnly = true)
+    public EmployeesNumberDto getEmployeesAndPriceOfSalaries(Integer spotsOccupied, Long hourlySalary) {
+        return carParkService.getAllEmployeesAndPriceOfSalaries(spotsOccupied, hourlySalary);
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean checkIfSpotsGenerated() {
+        return carParkService.checkIfSpotsGenerated();
+    }
 }

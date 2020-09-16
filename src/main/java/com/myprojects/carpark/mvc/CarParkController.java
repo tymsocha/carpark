@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("cars")
+@RestController
+@CrossOrigin
 @AllArgsConstructor
 public class CarParkController {
 
@@ -17,6 +18,11 @@ public class CarParkController {
             @PathVariable("spots") Integer spots
     ) {
         return ResponseEntity.ok(carParkApi.generateSlots(floors, spots));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "check")
+    public ResponseEntity<?> checkIfCarParkGenerated() {
+        return ResponseEntity.ok(carParkApi.checkIfSpotsGenerated());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "occupiedSlots")
@@ -66,5 +72,13 @@ public class CarParkController {
             @RequestParam(required = false) String endDate
     ) {
         return ResponseEntity.ok(carParkApi.getElectricityConsumptionAndCostForCarPark(energyConsumption, cost, startDate, endDate));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "employees/spots/{spots}")
+    public ResponseEntity<?> getNumberOfEmployeesForFloorsAndTheirDailySalary(
+            @PathVariable("spots") Integer spotsOccupied,
+            @RequestParam Long hourlySalary
+    ) {
+        return ResponseEntity.ok(carParkApi.getEmployeesAndPriceOfSalaries(spotsOccupied, hourlySalary));
     }
 }
