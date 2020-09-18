@@ -47,7 +47,7 @@ public class CarParkApi {
     }
 
     @Transactional(readOnly = true)
-    public EmployeesNumberDto getEmployeesAndPriceOfSalaries(Integer spotsOccupied, Long hourlySalary) {
+    public EmployeesNumberDto getEmployeesAndPriceOfSalaries(Integer spotsOccupied, Long hourlySalary)  {
         return carParkService.getAllEmployeesAndPriceOfSalaries(spotsOccupied, hourlySalary);
     }
 

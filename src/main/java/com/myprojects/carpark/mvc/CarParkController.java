@@ -76,9 +76,9 @@ public class CarParkController {
 
     @RequestMapping(method = RequestMethod.GET, value = "employees/spots/{spots}")
     public ResponseEntity<?> getNumberOfEmployeesForFloorsAndTheirDailySalary(
-            @PathVariable("spots") Integer spotsOccupied,
+            @PathVariable("spots") Integer spotsToService,
             @RequestParam Long hourlySalary
     ) {
-        return ResponseEntity.ok(carParkApi.getEmployeesAndPriceOfSalaries(spotsOccupied, hourlySalary));
+        return ResponseEntity.ok(carParkApi.getEmployeesAndPriceOfSalaries(spotsToService, hourlySalary));
     }
 }

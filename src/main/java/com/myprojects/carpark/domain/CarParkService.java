@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -148,8 +150,36 @@ public class CarParkService {
                 .collect(Collectors.toList());
     }
 
-    EmployeesNumberDto getAllEmployeesAndPriceOfSalaries(Integer spotsOccupied, Long hourlySalary) {
-        return null;
+    EmployeesNumberDto getAllEmployeesAndPriceOfSalaries(Integer spotsToService, Long hourlySalary) {
+        List<Slot> slotList = slotRepository.findAll();
+        Map<Integer, List<String>> mapOfFlorsAndSpots = new HashMap<>();
+        Integer floorNumber = 0;
+        Integer numberOfSpotsPerFloor;
+        Integer numberOfFloors;
+        EmployeesNumberDto employeesNumberDto = null;
+
+        for (Slot slot : slotList) {
+            if (!slot.getName().startsWith(floorNumber.toString())) {
+                floorNumber = Integer.parseInt(Character.toString(slot.getName().charAt(0)));
+            }
+            mapOfFlorsAndSpots.putIfAbsent(floorNumber, new ArrayList<>());
+            mapOfFlorsAndSpots.get(floorNumber).add(slot.getName());
+        }
+
+        if (!mapOfFlorsAndSpots.isEmpty()) {
+            numberOfSpotsPerFloor = mapOfFlorsAndSpots.get(0).size();
+            numberOfFloors = mapOfFlorsAndSpots.keySet().size();
+            Integer numberOfEmployeesPerFloor = numberOfSpotsPerFloor % spotsToService == 0 ? numberOfSpotsPerFloor / spotsToService : numberOfSpotsPerFloor / spotsToService + 1;
+
+            employeesNumberDto = EmployeesNumberDto.builder()
+                    .numberOfEmployeesPerFloor(numberOfEmployeesPerFloor)
+                    .numberOfAllEmployees(numberOfEmployeesPerFloor * numberOfFloors)
+                    .salaryOfOneEmployeePerDay(14 * hourlySalary)
+                    .totalPriceToPayPerDay(14 * hourlySalary * numberOfEmployeesPerFloor * numberOfFloors)
+                    .build();
+        }
+
+        return employeesNumberDto;
     }
 
     Boolean checkIfSpotsGenerated() {
