@@ -43,7 +43,7 @@ public class CarParkApi {
 
     @Transactional(readOnly = true)
     public CarParkEnergyDto getElectricityConsumptionAndCostForCarPark(Long energyConsumption, Long cost, String startDate, String endDate) {
-        return carParkService.getEletricConsumptionAndCostForCarPark(energyConsumption, cost, startDate, endDate);
+        return carParkService.getEletricityConsumptionAndCostForCarPark(energyConsumption, cost, startDate, endDate);
     }
 
     @Transactional(readOnly = true)

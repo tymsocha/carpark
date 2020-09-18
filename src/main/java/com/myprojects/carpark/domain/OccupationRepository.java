@@ -82,7 +82,7 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
     );
 
     @Query(
-            "SELECT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
+            "SELECT DISTINCT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
             "LEFT JOIN Slot s ON s.id = o.slot.id " +
             "WHERE o.occupied = true " +
             "GROUP BY s.name"

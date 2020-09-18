@@ -109,7 +109,7 @@ public class CarParkService {
                 .build();
     }
 
-    CarParkEnergyDto getEletricConsumptionAndCostForCarPark(Long energyConsumption, Long cost, String startDateString, String endDateString) {
+    CarParkEnergyDto getEletricityConsumptionAndCostForCarPark(Long energyConsumption, Long cost, String startDateString, String endDateString) {
         List<OccupationTimeDTO> timeDTOS;
         List<FloorEnergyDto> floorEnergyDtos = new ArrayList<>();
 
@@ -144,6 +144,7 @@ public class CarParkService {
     private List<Integer> getAllFloorNumbers(List<OccupationTimeDTO> timeDTOS) {
         return timeDTOS.stream()
                 .map(OccupationTimeDTO::getFloor)
+                .distinct()
                 .collect(Collectors.toList());
     }
 
