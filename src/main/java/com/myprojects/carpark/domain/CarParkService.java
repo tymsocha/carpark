@@ -81,8 +81,8 @@ public class CarParkService {
         try {
             return EnergyConsumptionDto.builder()
                     .spot(timeDTO.getSlotName())
-                    .occupiedTime(timeDTO.getOccupiedTime())
-                    .energyConsumption(timeDTO.getOccupiedTime() * energyConsumption)
+                    .occupiedTime(timeDTO.getOccupiedTime() / 2)
+                    .energyConsumption(timeDTO.getOccupiedTime() / 2 * energyConsumption)
                     .energyCost(timeDTO.getOccupiedTime() / 2 * energyConsumption * cost)
                     .build();
         } catch (NullPointerException e) {

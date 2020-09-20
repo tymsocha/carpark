@@ -40,9 +40,9 @@ class Mapper {
             energyConsumptionDtos.add(
                     EnergyConsumptionDto.builder()
                     .spot(timeDTO.getSlotName())
-                    .occupiedTime(timeDTO.getOccupiedTime() / 2)
-                    .energyConsumption(timeDTO.getOccupiedTime() / 2 * energyConsumption)
-                    .energyCost(timeDTO.getOccupiedTime() / 2 * energyConsumption * energyCost)
+                    .occupiedTime(timeDTO.getOccupiedTime())
+                    .energyConsumption(timeDTO.getOccupiedTime() * energyConsumption)
+                    .energyCost(timeDTO.getOccupiedTime() * energyConsumption * energyCost)
                     .build()
             );
         }
