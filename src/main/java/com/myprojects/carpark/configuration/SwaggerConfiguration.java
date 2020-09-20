@@ -11,11 +11,18 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+
+//Klasa konfigurująca Swaggera, czyli interfejsu slużącego do opisywania aplikacji RESTowych wyrażonych za pomocą JSON.
+//Swagger jest używany razem z zestawem narzędzi oprogramowania typu open source do projektowania, tworzenia, dokumentowania i korzystania z usług RESTowych aplikacji.
+//@EnableScheduling - Włącza schedulere, dzięki któremu działa swagger
+//@EnableSwagger2 - Pozawala na użycie Swaggera
+//@Configuration - oznacza klasę konfigurującą beany, na podstawie tej adnotacji Spring tworzy beany
 @EnableScheduling
 @EnableSwagger2
 @Configuration
 public class SwaggerConfiguration implements WebMvcConfigurer {
 
+    //Metoda konfigurująca swaggera i w jakim wolderze ma szukać RESTowych endpointów
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -23,14 +30,5 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
                 .apis(RequestHandlerSelectors.basePackage("com.myprojects.carpark"))
                 .paths(PathSelectors.any())
                 .build();
-    }
-
-    @Override
-    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/lib/**").addResourceLocations("/lib/").setCachePeriod(0);
-        registry.addResourceHandler("/images/**").addResourceLocations("/images/").setCachePeriod(0);
-        registry.addResourceHandler("/css/**").addResourceLocations("/css/").setCachePeriod(0);
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }

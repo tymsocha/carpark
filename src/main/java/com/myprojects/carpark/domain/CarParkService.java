@@ -14,16 +14,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+//@Service - adnotacja mówiąca springowi, aby utworzył beana typu danej klasy, która ma zadania serwisu
+//@AllArgsConstructor - adnotacja z biblioteki Lombok tworząca konstruktor zewszystkimi polami tej klasy
+//@FieldDefaults(level = AccessLevel.PRIVATE) - nadaje każdemu polu w klasie prywatny modyfikator dostępu
 @Service
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CarParkService {
 
+    //Pola powstałe dzięki utworzeniu beanów w danych klasach
     CarSpotsGenerator carSpotsGenerator;
     OccupationRepository occupationRepository;
     SlotRepository slotRepository;
     Mapper mapper;
 
+    //Metoda generująca używająca metod generatora: generuje i zapisuje dane do bazy
     GenerationTimeDto generateSlots(Integer floorsNumber, Integer spotsNumber) {
         Long start = System.currentTimeMillis();
         List<Slot> generatedSlots = carSpotsGenerator.generateCarParkMap(floorsNumber, spotsNumber);
@@ -33,6 +38,7 @@ public class CarParkService {
         return mapper.mapToGenerationTimeDto(generatedSlots, (end - start));
     }
 
+    //Metoda zwraca nazwy miejsc, kóre są zajęte w zależności od podanego czasu i piętra
     List<String> getOccupiedSlots(String timeString, Integer floor) {
         List<String> occupiedSlots;
 
@@ -48,6 +54,7 @@ public class CarParkService {
         return occupiedSlots;
     }
 
+    //Metoda zwraca statystyki, przez jaki czas dane miejsce było zajęte na danym pietrze w danym czasie
     List<OccupationTimeDTO> getAmountOfOccupationTimePerSlot(Integer floor, String startDateString, String endDateString) {
         if (startDateString == null || endDateString == null) {
             List<OccupationTimeDTO> dtos = occupationRepository.selectSpotsAndCountOccupiedTime(floor);
@@ -63,6 +70,7 @@ public class CarParkService {
         }
     }
 
+    //Metoda zwracająca statystyki związane z konsumpcją prądu na danym miejscu w danym przedziale czasowym
     EnergyConsumptionDto getElectricityConsumptionAndCost(String spot, Long energyConsumption, Long cost, String startDateString, String endDateString) {
         List<OccupationTimeDTO> dtos;
         OccupationTimeDTO timeDTO;
@@ -92,7 +100,7 @@ public class CarParkService {
         return EnergyConsumptionDto.builder().build();
     }
 
-
+    //Metoda zwracająca statystyki związane z konsumpcją prądu i kosztem na danym piętrze, w danym przedziale czasowym
     FloorEnergyDto getElectricityConsumptionAndCostPerFloor(Integer floor, Long energyConsumption, Long cost, String startDate, String endDate) {
         List<OccupationTimeDTO> occupationTimes = getAmountOfOccupationTimePerSlot(floor, startDate, endDate);
 
@@ -111,6 +119,7 @@ public class CarParkService {
                 .build();
     }
 
+    //Metoda zwracająca statystyki związane z konsumpcją prądu i kosztem na całym parkingu, w danym przedziale czasowym
     CarParkEnergyDto getEletricityConsumptionAndCostForCarPark(Long energyConsumption, Long cost, String startDateString, String endDateString) {
         List<OccupationTimeDTO> timeDTOS;
         List<FloorEnergyDto> floorEnergyDtos = new ArrayList<>();
@@ -143,6 +152,7 @@ public class CarParkService {
                 .build();
     }
 
+    //Metoda zwracająca wszystkie numery pięter na podstawie listy obiektów typu TimeDto
     private List<Integer> getAllFloorNumbers(List<OccupationTimeDTO> timeDTOS) {
         return timeDTOS.stream()
                 .map(OccupationTimeDTO::getFloor)
@@ -150,6 +160,7 @@ public class CarParkService {
                 .collect(Collectors.toList());
     }
 
+    //Metoda zwracająca dane na temat ilości pracowników na piętrze i całym parkingu, i ich wypłat, w zależności od ilości pracowników potrzebnych do obsługi zadanej ilości miejsc
     EmployeesNumberDto getAllEmployeesAndPriceOfSalaries(Integer spotsToService, Long hourlySalary) {
         List<Slot> slotList = slotRepository.findAll();
         Map<Integer, List<String>> mapOfFlorsAndSpots = new HashMap<>();
@@ -182,6 +193,7 @@ public class CarParkService {
         return employeesNumberDto;
     }
 
+    //Metoda sprawdzająca czy miejsca zostały wygenerowane
     Boolean checkIfSpotsGenerated() {
         List<Slot> slotList = slotRepository.findAll();
         return !slotList.isEmpty();
