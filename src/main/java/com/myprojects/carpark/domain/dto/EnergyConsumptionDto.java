@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EnergyConsumptionDto {
     String spot;
-    Long occupiedTime;
-    Long energyConsumption;
-    Long energyCost;
+    Double occupiedTime;
+    Double energyConsumption;
+    Double energyCost;
 }

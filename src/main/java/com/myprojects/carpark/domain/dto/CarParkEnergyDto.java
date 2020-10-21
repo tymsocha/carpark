@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CarParkEnergyDto {
-    Long totalEnergyConsumption;
-    Long totalEnergyCost;
+    Double totalEnergyConsumption;
+    Double totalEnergyCost;
     List<FloorEnergyDto> floors;
 }

@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EmployeesNumberDto {
     Integer numberOfEmployeesPerFloor;
-    Long salaryOfOneEmployeePerDay;
+    Double salaryOfOneEmployeePerDay;
     Integer numberOfAllEmployees;
-    Long totalPriceToPayPerDay;
+    Double totalPriceToPayPerDay;
 }

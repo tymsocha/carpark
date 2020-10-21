@@ -47,7 +47,7 @@ public class CarParkApi {
     //Dodatkowo pole readOny ustawione na wartość true oznacza, że jedyna ingerencja w bazę danych to ich odczyt
     //Metoda zwracająca statystyki, przez ile czasu dane miejsce było zajęte, jakie było zużycie energii na dane miejsce i jego koszt
     @Transactional(readOnly = true)
-    public EnergyConsumptionDto getElectricityConsumptionAndCost(String spot, Long energyConsumption, Long cost, String startDate, String endDate) {
+    public EnergyConsumptionDto getElectricityConsumptionAndCost(String spot, Double energyConsumption, Double cost, String startDate, String endDate) {
         return carParkService.getElectricityConsumptionAndCost(spot, energyConsumption, cost, startDate, endDate);
     }
 
@@ -55,7 +55,7 @@ public class CarParkApi {
     //Dodatkowo pole readOny ustawione na wartość true oznacza, że jedyna ingerencja w bazę danych to ich odczyt
     //Metoda zwracająca statystyki, przez ile czasu dane miejsce było zajęte, jakie było zużycie energii na dane miejsce i jego koszt, dla danego piętra i przedziału czasowego
     @Transactional(readOnly = true)
-    public FloorEnergyDto getElectricityConsumptionAndCostPerFloor(Integer floor, Long energyConsumption, Long cost, String startDate, String endDate) {
+    public FloorEnergyDto getElectricityConsumptionAndCostPerFloor(Integer floor, Double energyConsumption, Double cost, String startDate, String endDate) {
         return carParkService.getElectricityConsumptionAndCostPerFloor(floor, energyConsumption, cost, startDate, endDate);
     }
 
@@ -63,7 +63,7 @@ public class CarParkApi {
     //Dodatkowo pole readOny ustawione na wartość true oznacza, że jedyna ingerencja w bazę danych to ich odczyt
     //Metoda zwracająca statystyki, przez ile czasu dane miejsce było zajęte, jakie było zużycie energii na dane miejsce i jego koszt, dla całego parkingu i przedziału czasowego
     @Transactional(readOnly = true)
-    public CarParkEnergyDto getElectricityConsumptionAndCostForCarPark(Long energyConsumption, Long cost, String startDate, String endDate) {
+    public CarParkEnergyDto getElectricityConsumptionAndCostForCarPark(Double energyConsumption, Double cost, String startDate, String endDate) {
         return carParkService.getEletricityConsumptionAndCostForCarPark(energyConsumption, cost, startDate, endDate);
     }
 
@@ -71,7 +71,7 @@ public class CarParkApi {
     //Dodatkowo pole readOny ustawione na wartość true oznacza, że jedyna ingerencja w bazę danych to ich odczyt
     //Metoda zwracająca liczbę pracowników potrzebnych na piętro, cały parking i koszt dziennego utrzymania parkingu
     @Transactional(readOnly = true)
-    public EmployeesNumberDto getEmployeesAndPriceOfSalaries(Integer spotsOccupied, Long hourlySalary)  {
+    public EmployeesNumberDto getEmployeesAndPriceOfSalaries(Integer spotsOccupied, Double hourlySalary)  {
         return carParkService.getAllEmployeesAndPriceOfSalaries(spotsOccupied, hourlySalary);
     }
 

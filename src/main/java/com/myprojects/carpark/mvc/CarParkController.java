@@ -72,8 +72,8 @@ public class CarParkController {
     @RequestMapping(method = RequestMethod.GET, value = "energyConsumption/spot/{spot}")
     public ResponseEntity<?> getElectricityConsumptionPerSpotAndCost(
             @PathVariable("spot") String spot,
-            @RequestParam Long energyConsumption,
-            @RequestParam Long cost,
+            @RequestParam Double energyConsumption,
+            @RequestParam Double cost,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate
     ) {
@@ -88,8 +88,8 @@ public class CarParkController {
     @RequestMapping(method = RequestMethod.GET, value = "energyConsumption/floor/{floor}")
     public ResponseEntity<?> getElectricityConsumptionPerFloorAndCost(
             @PathVariable("floor") Integer floor,
-            @RequestParam Long energyConsumption,
-            @RequestParam Long cost,
+            @RequestParam Double energyConsumption,
+            @RequestParam Double cost,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate
     ) {
@@ -102,8 +102,8 @@ public class CarParkController {
     //Metoda zwracająca statystyki, przez ile czasu dane miejsce było zajęte, jakie było zużycie energii na dane miejsce i jego koszt, dla całego parkingu i przedziału czasowego
     @RequestMapping(method = RequestMethod.GET, value = "energyConsumption")
     public ResponseEntity<?> getElectricityConsumptionForCarPark(
-            @RequestParam Long energyConsumption,
-            @RequestParam Long cost,
+            @RequestParam Double energyConsumption,
+            @RequestParam Double cost,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate
     ) {
@@ -118,7 +118,7 @@ public class CarParkController {
     @RequestMapping(method = RequestMethod.GET, value = "employees/spots/{spots}")
     public ResponseEntity<?> getNumberOfEmployeesForFloorsAndTheirDailySalary(
             @PathVariable("spots") Integer spotsToService,
-            @RequestParam Long hourlySalary
+            @RequestParam Double hourlySalary
     ) {
         return ResponseEntity.ok(carParkApi.getEmployeesAndPriceOfSalaries(spotsToService, hourlySalary));
     }

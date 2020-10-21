@@ -6,6 +6,8 @@ import com.myprojects.carpark.domain.dto.OccupationTimeDTO;
 import com.myprojects.carpark.domain.dto.SlotDto;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,20 +41,26 @@ class Mapper {
     }
 
     //Metoda mapująca obiekty: Liste obiektów typu OccupationTimeDto, wartość energii i jej kosztu jednostkowego na listę obiektów EnergyConsumptionDto
-    List<EnergyConsumptionDto> mapToEnergyConsumptionListDto(List<OccupationTimeDTO> timeDTOS, Long energyConsumption, Long energyCost) {
+    List<EnergyConsumptionDto> mapToEnergyConsumptionListDto(List<OccupationTimeDTO> timeDTOS, Double energyConsumption, Double energyCost) {
         List<EnergyConsumptionDto> energyConsumptionDtos = new ArrayList<>();
 
         for (OccupationTimeDTO timeDTO : timeDTOS) {
             energyConsumptionDtos.add(
                     EnergyConsumptionDto.builder()
                     .spot(timeDTO.getSlotName())
-                    .occupiedTime(timeDTO.getOccupiedTime())
-                    .energyConsumption(timeDTO.getOccupiedTime() * energyConsumption)
-                    .energyCost(timeDTO.getOccupiedTime() * energyConsumption * energyCost)
+                    .occupiedTime(timeDTO.getOccupiedTime().doubleValue())
+                    .energyConsumption(roundDouble(timeDTO.getOccupiedTime() * energyConsumption))
+                    .energyCost(roundDouble(timeDTO.getOccupiedTime() * energyConsumption * energyCost))
                     .build()
             );
         }
 
         return energyConsumptionDtos;
+    }
+
+    public static Double roundDouble(Double number) {
+        BigDecimal bigDecimal = new BigDecimal(Double.toString(number));
+        bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_UP);
+        return bigDecimal.doubleValue();
     }
 }
