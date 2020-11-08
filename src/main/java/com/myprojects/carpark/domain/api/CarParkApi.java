@@ -1,6 +1,7 @@
-package com.myprojects.carpark.domain;
+package com.myprojects.carpark.domain.api;
 
 import com.myprojects.carpark.domain.dto.*;
+import com.myprojects.carpark.domain.service.CarParkService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -81,5 +82,14 @@ public class CarParkApi {
     @Transactional(readOnly = true)
     public Boolean checkIfSpotsGenerated() {
         return carParkService.checkIfSpotsGenerated();
+    }
+
+    @Transactional
+    public ClosedFloorDto closeTheFloor(Integer floor, String startDate, String endDate) {
+        return carParkService.closeTheFloor(floor, startDate, endDate);
+    }
+
+    public ConclusionDto conclude() {
+        return carParkService.conclude();
     }
 }

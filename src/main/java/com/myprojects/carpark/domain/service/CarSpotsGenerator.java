@@ -1,7 +1,13 @@
-package com.myprojects.carpark.domain;
+package com.myprojects.carpark.domain.service;
 
-import com.myprojects.carpark.exception.WrongNumberOfFloorsException;
-import com.myprojects.carpark.exception.WrongNumberOfSpotsException;
+import com.myprojects.carpark.domain.entity.Occupation;
+import com.myprojects.carpark.domain.entity.Slot;
+import com.myprojects.carpark.domain.entity.TimeUnit;
+import com.myprojects.carpark.domain.repository.OccupationRepository;
+import com.myprojects.carpark.domain.repository.SlotRepository;
+import com.myprojects.carpark.domain.repository.TimeUnitRepository;
+import com.myprojects.carpark.domain.exception.WrongNumberOfFloorsException;
+import com.myprojects.carpark.domain.exception.WrongNumberOfSpotsException;
 import com.myprojects.carpark.utils.GeneralConstants;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -144,18 +150,24 @@ class CarSpotsGenerator {
         List<Occupation> valuesOfOccupiedSeats = new ArrayList<>();
         List<Slot> allSlots = slotRepository.findAll();
         List<TimeUnit> allTimeUnits = timeUnitRepository.findAll();
-        Random random = new Random();
+
         Occupation occupation;
         for (Slot slot : allSlots) {
             for (TimeUnit timeUnit : allTimeUnits) {
                 occupation = Occupation.builder()
                                 .slot(slot)
                                 .timeUnit(timeUnit)
-                                .occupied(random.nextBoolean())
+                                .occupied(getRandomValue())
                                 .build();
                 valuesOfOccupiedSeats.add(occupation);
             }
         }
         occupationRepository.saveAll(valuesOfOccupiedSeats);
+    }
+
+    //Metoda generująca dwie wartości i sprawdzająca warunek większości jednej liczby od drugiej
+    private boolean getRandomValue() {
+        Random random = new Random();
+        return random.nextInt(100) > random.nextInt(100);
     }
 }

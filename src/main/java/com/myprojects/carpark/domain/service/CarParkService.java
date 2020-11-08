@@ -1,7 +1,13 @@
-package com.myprojects.carpark.domain;
+package com.myprojects.carpark.domain.service;
 
 import com.myprojects.carpark.domain.dto.*;
-import com.myprojects.carpark.exception.LessThanZeroValueException;
+import com.myprojects.carpark.domain.entity.ClosedFloor;
+import com.myprojects.carpark.domain.entity.Slot;
+import com.myprojects.carpark.domain.mapper.Mapper;
+import com.myprojects.carpark.domain.repository.ClosedFloorRepository;
+import com.myprojects.carpark.domain.repository.OccupationRepository;
+import com.myprojects.carpark.domain.repository.SlotRepository;
+import com.myprojects.carpark.domain.exception.LessThanZeroValueException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,9 +34,10 @@ public class CarParkService {
     OccupationRepository occupationRepository;
     SlotRepository slotRepository;
     Mapper mapper;
+    ClosedFloorRepository closedFloorRepository;
 
     //Metoda generująca używająca metod generatora: generuje i zapisuje dane do bazy
-    GenerationTimeDto generateSlots(Integer floorsNumber, Integer spotsNumber) {
+    public GenerationTimeDto generateSlots(Integer floorsNumber, Integer spotsNumber) {
         Long start = System.currentTimeMillis();
         List<Slot> generatedSlots = carSpotsGenerator.generateCarParkMap(floorsNumber, spotsNumber);
         carSpotsGenerator.generateTimeUnitsThrough30Days();
@@ -40,7 +47,7 @@ public class CarParkService {
     }
 
     //Metoda zwraca nazwy miejsc, kóre są zajęte w zależności od podanego czasu i piętra
-    List<String> getOccupiedSlots(String timeString, Integer floor) {
+    public List<String> getOccupiedSlots(String timeString, Integer floor) {
         List<String> occupiedSlots = new ArrayList<>();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -64,7 +71,7 @@ public class CarParkService {
     }
 
     //Metoda zwraca statystyki, przez jaki czas dane miejsce było zajęte na danym pietrze w danym czasie
-    List<OccupationTimeDTO> getAmountOfOccupationTimePerSlot(Integer floor, String startDateString, String endDateString) {
+    public List<OccupationTimeDTO> getAmountOfOccupationTimePerSlot(Integer floor, String startDateString, String endDateString) {
         try {
             checkIfProvidedIntegerValueIsBiggerThanZero(floor);
             if (startDateString == null || endDateString == null) {
@@ -87,7 +94,7 @@ public class CarParkService {
     }
 
     //Metoda zwracająca statystyki związane z konsumpcją prądu na danym miejscu w danym przedziale czasowym
-    EnergyConsumptionDto getElectricityConsumptionAndCost(String spot, Double energyConsumption, Double cost, String startDateString, String endDateString) {
+    public EnergyConsumptionDto getElectricityConsumptionAndCost(String spot, Double energyConsumption, Double cost, String startDateString, String endDateString) {
         List<OccupationTimeDTO> dtos;
         OccupationTimeDTO timeDTO;
 
@@ -125,7 +132,7 @@ public class CarParkService {
     }
 
     //Metoda zwracająca statystyki związane z konsumpcją prądu i kosztem na danym piętrze, w danym przedziale czasowym
-    FloorEnergyDto getElectricityConsumptionAndCostPerFloor(Integer floor, Double energyConsumption, Double cost, String startDate, String endDate) {
+    public FloorEnergyDto getElectricityConsumptionAndCostPerFloor(Integer floor, Double energyConsumption, Double cost, String startDate, String endDate) {
         try {
             checkIfProvidedIntegerValueIsBiggerThanZero(floor);
             checkIfProvidedDoubleValueIsBiggerThanZero(cost);
@@ -155,7 +162,7 @@ public class CarParkService {
     }
 
     //Metoda zwracająca statystyki związane z konsumpcją prądu i kosztem na całym parkingu, w danym przedziale czasowym
-    CarParkEnergyDto getEletricityConsumptionAndCostForCarPark(Double energyConsumption, Double cost, String startDateString, String endDateString) {
+    public CarParkEnergyDto getEletricityConsumptionAndCostForCarPark(Double energyConsumption, Double cost, String startDateString, String endDateString) {
         List<OccupationTimeDTO> timeDTOS;
         List<FloorEnergyDto> floorEnergyDtos = new ArrayList<>();
 
@@ -206,7 +213,7 @@ public class CarParkService {
     }
 
     //Metoda zwracająca dane na temat ilości pracowników na piętrze i całym parkingu, i ich wypłat, w zależności od ilości pracowników potrzebnych do obsługi zadanej ilości miejsc
-    EmployeesNumberDto getAllEmployeesAndPriceOfSalaries(Integer spotsToService, Double hourlySalary) {
+    public EmployeesNumberDto getAllEmployeesAndPriceOfSalaries(Integer spotsToService, Double hourlySalary) {
         List<Slot> slotList = slotRepository.findAll();
         Map<Integer, List<String>> mapOfFlorsAndSpots = new HashMap<>();
         Integer floorNumber = 0;
@@ -246,7 +253,7 @@ public class CarParkService {
     }
 
     //Metoda sprawdzająca czy miejsca zostały wygenerowane
-    Boolean checkIfSpotsGenerated() {
+    public Boolean checkIfSpotsGenerated() {
         List<Slot> slotList = slotRepository.findAll();
         return !slotList.isEmpty();
     }
@@ -261,6 +268,29 @@ public class CarParkService {
         if (value < 0) {
             throw new LessThanZeroValueException();
         }
+    }
+
+    public ClosedFloorDto closeTheFloor(Integer floor, String startDateString, String endDateString) {
+        List<ClosedFloor> closedFloors = closedFloorRepository.findAll();
+        if (!closedFloors.isEmpty()) {
+            closedFloors.forEach(closedFloor -> closedFloor.setActive(false));
+            closedFloorRepository.saveAll(closedFloors);
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime startDate = LocalDateTime.parse(startDateString, formatter);
+        LocalDateTime endDate = LocalDateTime.parse(endDateString, formatter);
+
+        ClosedFloor closedFloor = ClosedFloor.builder()
+                .active(true).floor(floor).startDate(startDate).endDate(endDate).build();
+
+        closedFloorRepository.save(closedFloor);
+
+        return mapper.mapClosedFloorToClosedFloorDto(closedFloor);
+    }
+
+    public ConclusionDto conclude() {
+        return null;
     }
 }
 

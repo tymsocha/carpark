@@ -1,6 +1,7 @@
-package com.myprojects.carpark.domain;
+package com.myprojects.carpark.domain.repository;
 
 import com.myprojects.carpark.domain.dto.OccupationTimeDTO;
+import com.myprojects.carpark.domain.entity.Occupation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

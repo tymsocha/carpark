@@ -1,9 +1,8 @@
-package com.myprojects.carpark.domain;
+package com.myprojects.carpark.domain.mapper;
 
-import com.myprojects.carpark.domain.dto.EnergyConsumptionDto;
-import com.myprojects.carpark.domain.dto.GenerationTimeDto;
-import com.myprojects.carpark.domain.dto.OccupationTimeDTO;
-import com.myprojects.carpark.domain.dto.SlotDto;
+import com.myprojects.carpark.domain.dto.*;
+import com.myprojects.carpark.domain.entity.ClosedFloor;
+import com.myprojects.carpark.domain.entity.Slot;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 //Klasa mapująca obiekty na inne
 //@Component - adnotacja mówiąca springowi, aby utworzył beana typu danej klasy
 @Component
-class Mapper {
+public class Mapper {
     //Metoda mapująca obiekt typu Slot na obiekt SlotDto
     private SlotDto mapToSlotDto(Slot slot) {
         return SlotDto.builder()
@@ -33,7 +32,7 @@ class Mapper {
     }
 
     //Metoda mapująca Listę obiektów typu slot i czas w milisekundach na obiekt typu GenerationTimeDto
-    GenerationTimeDto mapToGenerationTimeDto(List<Slot> slotList, Long time) {
+    public GenerationTimeDto mapToGenerationTimeDto(List<Slot> slotList, Long time) {
         return GenerationTimeDto.builder()
                 .slotDtos(mapToSlotDtoList(slotList))
                 .timeOfGeneration(time)
@@ -41,7 +40,7 @@ class Mapper {
     }
 
     //Metoda mapująca obiekty: Liste obiektów typu OccupationTimeDto, wartość energii i jej kosztu jednostkowego na listę obiektów EnergyConsumptionDto
-    List<EnergyConsumptionDto> mapToEnergyConsumptionListDto(List<OccupationTimeDTO> timeDTOS, Double energyConsumption, Double energyCost) {
+    public List<EnergyConsumptionDto> mapToEnergyConsumptionListDto(List<OccupationTimeDTO> timeDTOS, Double energyConsumption, Double energyCost) {
         List<EnergyConsumptionDto> energyConsumptionDtos = new ArrayList<>();
 
         for (OccupationTimeDTO timeDTO : timeDTOS) {
@@ -62,5 +61,20 @@ class Mapper {
         BigDecimal bigDecimal = new BigDecimal(Double.toString(number));
         bigDecimal = bigDecimal.setScale(2, RoundingMode.HALF_UP);
         return bigDecimal.doubleValue();
+    }
+
+    public ClosedFloorDto mapClosedFloorToClosedFloorDto(ClosedFloor closedFloor) {
+        String startDate = closedFloor.getStartDate().toLocalDate().toString();
+        String startTime = closedFloor.getStartDate().toLocalTime().toString();
+        String endDate = closedFloor.getEndDate().toLocalDate().toString();
+        String endTime = closedFloor.getEndDate().toLocalTime().toString();
+
+        return ClosedFloorDto.builder()
+                .floor(closedFloor.getFloor())
+                .startDateString(startDate)
+                .startHourString(startTime)
+                .endDateString(endDate)
+                .endHourString(endTime)
+                .build();
     }
 }

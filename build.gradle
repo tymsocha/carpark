@@ -28,7 +28,7 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     compile group: 'tk.plogitech', name: 'darksky-forecast-api', version: '0.9'
     compile group: 'tk.plogitech', name: 'darksky-forecast-api-jackson', version: '2.0.2'
-    runtimeOnly 'com.h2database:h2'
+    runtime 'com.h2database:h2'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     //Lombok
     compileOnly 'org.projectlombok:lombok'

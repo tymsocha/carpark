@@ -1,4 +1,4 @@
-package com.myprojects.carpark.domain;
+package com.myprojects.carpark.domain.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,7 +17,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class Occupation {
+public class Occupation {
     //@ID - adnotacja, która określa dane pole jako ID w bazie danych
     //@GeneratedValue - adnotacja, która nadaje automatycznie wartość pola ID za daną kolejnością
     @Id

@@ -1,9 +1,10 @@
-package com.myprojects.carpark.domain;
+package com.myprojects.carpark.domain.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 //Encja reprezentująca tabelę w bazie danych
@@ -18,18 +19,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class Slot {
+public class TimeUnit {
     //@ID - adnotacja, która określa dane pole jako ID w bazie danych
     //@GeneratedValue - adnotacja, która nadaje automatycznie wartość pola ID za daną kolejnością
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String name;
-
-    int floorNumber;
+    @Column
+    LocalDateTime dateTime;
 
     //@OneToMany - adnotacja świadcząca o relacji z obiektem typu Occupation
-    @OneToMany(mappedBy = "slot")
+    @OneToMany(mappedBy = "timeUnit")
     List<Occupation> occupations;
+
 }

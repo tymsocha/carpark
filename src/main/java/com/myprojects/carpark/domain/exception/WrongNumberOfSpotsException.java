@@ -1,4 +1,4 @@
-package com.myprojects.carpark.exception;
+package com.myprojects.carpark.domain.exception;
 
 //Klasa dziedzicząca po klasie wyjątku, stworzona na podstawy aplikacji.
 public class WrongNumberOfSpotsException extends Exception {

@@ -1,6 +1,6 @@
 package com.myprojects.carpark.mvc;
 
-import com.myprojects.carpark.domain.CarParkApi;
+import com.myprojects.carpark.domain.api.CarParkApi;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -121,5 +121,19 @@ public class CarParkController {
             @RequestParam Double hourlySalary
     ) {
         return ResponseEntity.ok(carParkApi.getEmployeesAndPriceOfSalaries(spotsToService, hourlySalary));
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "close/{floor}")
+    public ResponseEntity<?> closeTheFloor(
+            @PathVariable("floor") Integer floor,
+            @RequestParam String startDate,
+            @RequestParam String endDate
+    ) {
+        return ResponseEntity.ok(carParkApi.closeTheFloor(floor, startDate, endDate));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "conclusion")
+    public ResponseEntity<?> generateConclusion() {
+        return ResponseEntity.ok(carParkApi.conclude());
     }
 }
