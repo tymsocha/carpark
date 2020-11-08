@@ -289,8 +289,32 @@ public class CarParkService {
         return mapper.mapClosedFloorToClosedFloorDto(closedFloor);
     }
 
-    public ConclusionDto conclude() {
-        return null;
+    public List<ConclusionDto> getAverageOccupationTimesForFloors() {
+        List<CarParkStructureDto> floorsAndSpots = slotRepository.getAllFloorsAndSpots();
+        List<ConclusionDto> conclusionDtos = new ArrayList<>();
+
+        for (CarParkStructureDto dto : floorsAndSpots) {
+            List<OccupationTimeDTO> times = getAmountOfOccupationTimePerSlot(dto.getFloor(), null, null);
+            Double averageOccupiedTimeForFloor = Mapper.roundDouble(times.stream()
+                    .mapToDouble(OccupationTimeDTO::getOccupiedTime)
+                    .summaryStatistics().getAverage());
+            conclusionDtos.add(ConclusionDto.builder().averageOccupationTime(averageOccupiedTimeForFloor)
+                    .floorOrCarPark(Integer.toString(dto.getFloor()))
+                    .build());
+        }
+
+        return conclusionDtos;
+    }
+
+    public ConclusionDto getAverageOccupationTimeForCarPark() {
+        Double averageOccupationTimeForCarPark = Mapper.roundDouble(getAverageOccupationTimesForFloors().stream()
+                .mapToDouble(ConclusionDto::getAverageOccupationTime)
+                .summaryStatistics().getAverage());
+
+        return ConclusionDto.builder()
+                .floorOrCarPark("Parking Lot")
+                .averageOccupationTime(averageOccupationTimeForCarPark)
+                .build();
     }
 }
 

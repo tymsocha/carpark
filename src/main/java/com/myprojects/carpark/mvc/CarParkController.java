@@ -132,8 +132,13 @@ public class CarParkController {
         return ResponseEntity.ok(carParkApi.closeTheFloor(floor, startDate, endDate));
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "conclusion")
+    @RequestMapping(method = RequestMethod.GET, value = "floorsAverage")
     public ResponseEntity<?> generateConclusion() {
-        return ResponseEntity.ok(carParkApi.conclude());
+        return ResponseEntity.ok(carParkApi.getAverageOccupationTimesForFloors());
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "carParkAverage")
+    public ResponseEntity<?> generateConclusionTwo() {
+        return ResponseEntity.ok(carParkApi.getAverageOccupationTimeForCarPark());
     }
 }

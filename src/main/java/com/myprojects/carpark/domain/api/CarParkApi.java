@@ -89,7 +89,11 @@ public class CarParkApi {
         return carParkService.closeTheFloor(floor, startDate, endDate);
     }
 
-    public ConclusionDto conclude() {
-        return carParkService.conclude();
+    public List<ConclusionDto> getAverageOccupationTimesForFloors() {
+        return carParkService.getAverageOccupationTimesForFloors();
+    }
+
+    public ConclusionDto getAverageOccupationTimeForCarPark() {
+        return carParkService.getAverageOccupationTimeForCarPark();
     }
 }
