@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 //@Service - adnotacja mówiąca springowi, aby utworzył beana typu danej klasy, która ma zadania serwisu
@@ -95,5 +97,13 @@ public class CarParkApi {
 
     public ConclusionDto getAverageOccupationTimeForCarPark() {
         return carParkService.getAverageOccupationTimeForCarPark();
+    }
+
+    public ByteArrayInputStream downloadExcelFile() {
+        return carParkService.loadExcel();
+    }
+
+    public void uploadExcelFile(MultipartFile file) {
+        carParkService.saveExcel(file);
     }
 }

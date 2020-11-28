@@ -26,6 +26,8 @@ public class Occupation {
 
     boolean occupied;
 
+    boolean isClosed;
+
     //@ManyToOne - adnotacja świadcząca o relacji z obiektem typu Slot
     //@JoinColumn - adnotacje mówiąca o nazwie kolumny, w której są przechowywane informacje na temat relacji między encjami
     @ManyToOne(fetch = FetchType.LAZY)

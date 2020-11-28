@@ -1,7 +1,9 @@
 package com.myprojects.carpark.domain.repository;
 
 import com.myprojects.carpark.domain.dto.OccupationTimeDTO;
+import com.myprojects.carpark.domain.dto.exceldtos.DatabaseDto;
 import com.myprojects.carpark.domain.entity.Occupation;
+import com.myprojects.carpark.domain.entity.Slot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,7 +24,8 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "LEFT JOIN Occupation occupation ON occupation.slot.id = slot.id " +
             "LEFT JOIN TimeUnit time ON occupation.timeUnit.id = time.id " +
             "WHERE occupation.occupied = true " +
-            "AND occupation.timeUnit.dateTime = :dateTime"
+            "AND occupation.timeUnit.dateTime = :dateTime " +
+            "AND occupation.isClosed = false"
     )
     List<String> getOccupiedSlots(@Param("dateTime") LocalDateTime dateTime);
 
@@ -34,7 +37,8 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "LEFT JOIN TimeUnit time ON occupation.timeUnit.id = time.id " +
             "WHERE occupation.timeUnit.dateTime = :dateTime " +
             "AND occupation.occupied = true " +
-            "AND slot.floorNumber = :floor"
+            "AND slot.floorNumber = :floor " +
+            "AND occupation.isClosed = false"
     )
     List<String> getOccupiedSlots(@Param("dateTime") LocalDateTime dateTime, @Param("floor") Integer floor);
 
@@ -47,6 +51,7 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "LEFT JOIN Slot s ON s.id = o.slot.id " +
             "WHERE s.floorNumber = :floor " +
             "AND o.occupied = true " +
+            "AND o.isClosed = false " +
             "GROUP BY s.name"
     )
     List<OccupationTimeDTO> selectSpotsAndCountOccupiedTime(@Param("floor") Integer floor);
@@ -63,6 +68,7 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "AND o.occupied = true " +
             "AND t.dateTime > :start " +
             "AND t.dateTime <= :end " +
+            "AND o.isClosed = false " +
             "GROUP BY s.name"
     )
     List<OccupationTimeDTO> selectSpotsAndCountOccupiedTime(
@@ -81,6 +87,7 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "AND o.occupied = true " +
             "AND t.dateTime > :start " +
             "AND t.dateTime <= :end " +
+            "AND o.isClosed = false " +
             "GROUP BY s.name"
     )
     List<OccupationTimeDTO> selectSpotAndCountOccupiedTime(
@@ -98,6 +105,7 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "LEFT JOIN Slot s ON s.id = o.slot.id " +
             "WHERE s.name = :spot " +
             "AND o.occupied = true " +
+            "AND o.isClosed = false " +
             "GROUP BY s.name"
     )
     List<OccupationTimeDTO> selectSpotAndCountOccupiedTime(
@@ -112,6 +120,7 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "SELECT DISTINCT new com.myprojects.carpark.domain.dto.OccupationTimeDTO(s.name, count(s), s.floorNumber) FROM Occupation o " +
             "LEFT JOIN Slot s ON s.id = o.slot.id " +
             "WHERE o.occupied = true " +
+            "AND o.isClosed = false " +
             "GROUP BY s.name"
     )
     List<OccupationTimeDTO> selectAllParkingSpotsAndCountOccupiedTime();
@@ -127,10 +136,40 @@ public interface OccupationRepository extends JpaRepository<Occupation, Long> {
             "WHERE o.occupied = true " +
             "AND t.dateTime > :start " +
             "AND t.dateTime <= :end " +
+            "AND o.isClosed = false " +
             "GROUP BY s.name"
     )
     List<OccupationTimeDTO> selectAllParkingSpotsAndCountOccupiedTime(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
+
+    @Query(
+            "SELECT o FROM Occupation o " +
+            "LEFT JOIN Slot s ON s.id = o.slot.id " +
+            "LEFT JOIN TimeUnit t ON t.id = o.timeUnit.id " +
+            "WHERE t.dateTime > :start " +
+            "AND t.dateTime <= :end " +
+            "AND s.floorNumber = :floor"
+    )
+    List<Occupation> getSlotsToClose(
+            @Param("floor") Integer floor,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @Query(
+            "SELECT o FROM Occupation o " +
+            "WHERE o.isClosed = true"
+    )
+    List<Occupation> getAllClosedSpots();
+
+    @Query(
+            "SELECT new com.myprojects.carpark.domain.dto.exceldtos.DatabaseDto(s.id, s.name, s.floorNumber, t.id, t.dateTime, " +
+                    "o.id, o.occupied, o.isClosed) FROM Occupation o " +
+            "LEFT JOIN Slot s ON s.id = o.slot.id " +
+            "LEFT JOIN TimeUnit t ON t.id = o.timeUnit.id"
+    )
+    List<DatabaseDto> getDatabaseForExcel();
+
 }

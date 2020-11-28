@@ -1,18 +1,19 @@
 package com.myprojects.carpark.domain.service;
 
 import com.myprojects.carpark.domain.dto.*;
-import com.myprojects.carpark.domain.entity.ClosedFloor;
-import com.myprojects.carpark.domain.entity.Slot;
+import com.myprojects.carpark.domain.dto.exceldtos.DatabaseDto;
+import com.myprojects.carpark.domain.entity.*;
 import com.myprojects.carpark.domain.mapper.Mapper;
-import com.myprojects.carpark.domain.repository.ClosedFloorRepository;
-import com.myprojects.carpark.domain.repository.OccupationRepository;
-import com.myprojects.carpark.domain.repository.SlotRepository;
+import com.myprojects.carpark.domain.repository.*;
 import com.myprojects.carpark.domain.exception.LessThanZeroValueException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -33,8 +34,10 @@ public class CarParkService {
     CarSpotsGenerator carSpotsGenerator;
     OccupationRepository occupationRepository;
     SlotRepository slotRepository;
+    TimeUnitRepository timeUnitRepository;
     Mapper mapper;
     ClosedFloorRepository closedFloorRepository;
+    EmployeesInformationRepository employeesInformationRepository;
 
     //Metoda generująca używająca metod generatora: generuje i zapisuje dane do bazy
     public GenerationTimeDto generateSlots(Integer floorsNumber, Integer spotsNumber) {
@@ -238,6 +241,17 @@ public class CarParkService {
                 numberOfFloors = mapOfFlorsAndSpots.keySet().size();
                 Integer numberOfEmployeesPerFloor = numberOfSpotsPerFloor % spotsToService == 0 ? numberOfSpotsPerFloor / spotsToService : numberOfSpotsPerFloor / spotsToService + 1;
 
+                EmployeesInformation employeesInformation = EmployeesInformation.builder()
+                        .numberOfAllEmployees(numberOfEmployeesPerFloor * numberOfFloors)
+                        .numberOfEmployeesPerFloor(numberOfEmployeesPerFloor)
+                        .salaryOfOneEmployeePerDay(14 * hourlySalary)
+                        .totalPriceToPayPerDay(Mapper.roundDouble(14 * hourlySalary * numberOfEmployeesPerFloor * numberOfFloors))
+                        .spotsToService(spotsToService)
+                        .salaryPerHour(hourlySalary)
+                        .build();
+
+                employeesInformationRepository.save(employeesInformation);
+
                 employeesNumberDto = EmployeesNumberDto.builder()
                         .numberOfEmployeesPerFloor(numberOfEmployeesPerFloor)
                         .numberOfAllEmployees(numberOfEmployeesPerFloor * numberOfFloors)
@@ -286,6 +300,8 @@ public class CarParkService {
 
         closedFloorRepository.save(closedFloor);
 
+        closeFloor(floor, startDate, endDate);
+
         return mapper.mapClosedFloorToClosedFloorDto(closedFloor);
     }
 
@@ -315,6 +331,44 @@ public class CarParkService {
                 .floorOrCarPark("Parking Lot")
                 .averageOccupationTime(averageOccupationTimeForCarPark)
                 .build();
+    }
+
+    private void closeFloor(Integer floor, LocalDateTime start, LocalDateTime end) {
+        List<Occupation> occupationsToClose = occupationRepository.getSlotsToClose(floor, start, end);
+        List<Occupation> closedSlots = occupationRepository.getAllClosedSpots();
+
+        occupationsToClose.forEach(occupation -> occupation.setClosed(true));
+        closedSlots.forEach(occupation -> occupation.setClosed(false));
+
+        occupationRepository.saveAll(occupationsToClose);
+        occupationRepository.saveAll(closedSlots);
+    }
+
+    public ByteArrayInputStream loadExcel() {
+        List<DatabaseDto> database = occupationRepository.getDatabaseForExcel();
+        List<Slot> slots = slotRepository.findAll();
+        List<Occupation> occupations = occupationRepository.findAll();
+        List<TimeUnit> timeUnits = timeUnitRepository.findAll();
+
+        return ExcelDownloadService.createExcelFile(database, slots, timeUnits, occupations);
+    }
+
+    public void saveExcel(MultipartFile file) {
+        try {
+            long start = System.currentTimeMillis();
+            List<Slot> slots = ExcelUploadService.excelToSlots(file.getInputStream());
+            List<TimeUnit> timeUnits = ExcelUploadService.excelToTimeUnits(file.getInputStream());
+            List<Occupation> occupations = ExcelUploadService.excelToOccupations(file.getInputStream(), slots, timeUnits);
+
+            slotRepository.saveAll(slots);
+            timeUnitRepository.saveAll(timeUnits);
+            occupationRepository.saveAll(occupations);
+
+            long end = System.currentTimeMillis();
+            System.out.println(end - start);
+        } catch (IOException e) {
+            throw new RuntimeException("fail to store excel data: " + e.getMessage());
+        }
     }
 }
 

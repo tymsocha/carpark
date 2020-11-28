@@ -1,9 +1,16 @@
 package com.myprojects.carpark.mvc;
 
 import com.myprojects.carpark.domain.api.CarParkApi;
+import com.myprojects.carpark.domain.service.ExcelUploadService;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 //Klasa będąca kontrolerem aplikacji, która ma bezpośrednie połączenie z frontową częscią aplikacji.
 //Wysyła i odbiera dane z interfejsu użytkownika w postaci URLi i dodatkowych parametrów
@@ -140,5 +147,33 @@ public class CarParkController {
     @RequestMapping(method = RequestMethod.GET, value = "carParkAverage")
     public ResponseEntity<?> generateConclusionTwo() {
         return ResponseEntity.ok(carParkApi.getAverageOccupationTimeForCarPark());
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "excel")
+    public ResponseEntity<Resource> createExcelFile() {
+        String fileName = "databse.xlsx";
+        InputStreamResource file = new InputStreamResource(carParkApi.downloadExcelFile());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .contentType(MediaType.parseMediaType("application/vnd.mas-excel"))
+                .body(file);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "excel")
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+        String message;
+
+        if (ExcelUploadService.hasExcelFormat(file)) {
+            try {
+                carParkApi.uploadExcelFile(file);
+                return ResponseEntity.noContent().build();
+            } catch (Exception e) {
+                message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+            }
+        }
+        message = "Please upload an excel file!";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 }
