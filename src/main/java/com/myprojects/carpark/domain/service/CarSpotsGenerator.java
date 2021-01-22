@@ -142,7 +142,11 @@ class CarSpotsGenerator {
 
     //Metoda zwracająca kolejny dzień miesiąca
     private LocalDateTime setDateOfNewMonth(LocalDateTime date) {
-        return LocalDateTime.of(date.getYear(), date.getMonthValue() + 1, 1, 8, 0);
+        if (date.getMonthValue() == 12) {
+            return LocalDateTime.of(date.getYear() + 1, 1, 1, 8, 0);
+        } else {
+            return LocalDateTime.of(date.getYear(), date.getMonthValue() + 1, 1, 8, 0);
+        }
     }
 
     //Metoda, która losowo wyznacza w jakim czasie i które miejsce było zajęte
